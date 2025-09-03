@@ -1,0 +1,25 @@
+{
+  "name": "weather-now",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:gh-pages": "tsc && vite build --base=/mobile-testing/",
+    "preview": "vite preview",
+    "serve:static": "npx serve dist"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2"
+  },
+  "dependencies": {
+    "@lit-labs/ssr": "^3.3.1",
+    "@tanstack/router": "^0.0.1-beta.53",
+    "@types/node": "^24.3.0",
+    "lit": "^3.3.1",
+    "vite-plugin-pwa": "^1.0.3",
+    "vite-ssg": "^28.1.0"
+  }
+}
