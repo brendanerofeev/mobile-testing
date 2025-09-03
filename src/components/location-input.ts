@@ -131,6 +131,11 @@ export class LocationInput extends LitElement {
   private searchCurrentLocation() {
     if (this.currentLocation) {
       this.inputValue = this.currentLocation;
+      // Also update the actual input element
+      const input = this.shadowRoot?.querySelector('.search-input') as HTMLInputElement;
+      if (input) {
+        input.value = this.currentLocation;
+      }
       this.dispatchEvent(new CustomEvent('location-search', {
         detail: this.currentLocation,
         bubbles: true
@@ -146,7 +151,6 @@ export class LocationInput extends LitElement {
             type="text"
             class="search-input"
             placeholder="Enter city name or postcode..."
-            .value=${this.inputValue}
             @input=${this.handleInputChange}
           />
           <button 

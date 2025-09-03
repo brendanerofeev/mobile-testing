@@ -196,6 +196,10 @@ export class WeatherApp extends LitElement {
     localStorage.setItem('temperature-unit', unit);
   }
 
+  private async handleLocationRequest() {
+    await this.requestLocation();
+  }
+
   render() {
     return html`
       <div class="container">
@@ -209,6 +213,7 @@ export class WeatherApp extends LitElement {
             <location-input
               .currentLocation=${this.currentLocation}
               @location-search=${this.handleLocationSearch}
+              @location-request=${this.handleLocationRequest}
             ></location-input>
             
             <div class="unit-toggle">
@@ -253,6 +258,17 @@ export class WeatherApp extends LitElement {
             ` : ''}
           </section>
         </main>
+
+        <footer style="text-align: center; margin-top: 2rem; padding: 1rem;">
+          <nav style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="/mobile-testing/about.html" style="color: rgba(255,255,255,0.8); text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; transition: all 0.2s;">
+              ℹ️ About
+            </a>
+            <a href="/mobile-testing/settings.html" style="color: rgba(255,255,255,0.8); text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; transition: all 0.2s;">
+              ⚙️ Settings
+            </a>
+          </nav>
+        </footer>
       </div>
     `;
   }
