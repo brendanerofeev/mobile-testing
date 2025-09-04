@@ -1,140 +1,214 @@
 import type { WeatherData } from '../app.ts';
 
-export class WeatherService {
-  private readonly GEOCODING_API = 'https://geocoding-api.open-meteo.com/v1/search';
-  private readonly WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
+// Mock weather data for various locations
+interface MockLocation {
+  name: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  weather: {
+    temperature: number;
+    condition: string;
+    description: string;
+    humidity: number;
+    windSpeed: number;
+    windDirection: number;
+    weatherCode: number;
+  };
+}
 
-  async getWeatherByCoordinates(latitude: number, longitude: number): Promise<WeatherData> {
-    try {
-      // Get weather data
-      const weatherUrl = `${this.WEATHER_API}?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m,winddirection_10m&timezone=auto`;
-      
-      const weatherResponse = await fetch(weatherUrl);
-      if (!weatherResponse.ok) {
-        throw new Error('Failed to fetch weather data');
-      }
-      
-      const weatherData = await weatherResponse.json();
-      
-      // Use coordinates as location name since Open-Meteo doesn't support reverse geocoding
-      let locationName = `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
-      let countryName = '';
-
-      return this.parseWeatherData(weatherData, locationName, countryName);
-    } catch (error) {
-      console.error('Weather API error:', error);
-      throw new Error('Failed to get weather data. Please try again.');
+const MOCK_LOCATIONS: Record<string, MockLocation> = {
+  // Australian cities (primary focus)
+  'sydney': {
+    name: 'Sydney',
+    country: 'Australia',
+    latitude: -33.8688,
+    longitude: 151.2093,
+    weather: {
+      temperature: 22,
+      condition: 'Partly Cloudy',
+      description: 'Partly cloudy with light winds',
+      humidity: 65,
+      windSpeed: 12,
+      windDirection: 45,
+      weatherCode: 2
     }
+  },
+  'melbourne': {
+    name: 'Melbourne',
+    country: 'Australia',
+    latitude: -37.8136,
+    longitude: 144.9631,
+    weather: {
+      temperature: 18,
+      condition: 'Cloudy',
+      description: 'Overcast with occasional light rain',
+      humidity: 78,
+      windSpeed: 8,
+      windDirection: 225,
+      weatherCode: 3
+    }
+  },
+  'brisbane': {
+    name: 'Brisbane',
+    country: 'Australia',
+    latitude: -27.4705,
+    longitude: 153.0260,
+    weather: {
+      temperature: 26,
+      condition: 'Sunny',
+      description: 'Clear sunny day',
+      humidity: 58,
+      windSpeed: 15,
+      windDirection: 90,
+      weatherCode: 0
+    }
+  },
+  'perth': {
+    name: 'Perth',
+    country: 'Australia',
+    latitude: -31.9505,
+    longitude: 115.8605,
+    weather: {
+      temperature: 24,
+      condition: 'Clear',
+      description: 'Clear skies and warm',
+      humidity: 45,
+      windSpeed: 20,
+      windDirection: 270,
+      weatherCode: 0
+    }
+  },
+  'adelaide': {
+    name: 'Adelaide',
+    country: 'Australia',
+    latitude: -34.9285,
+    longitude: 138.6007,
+    weather: {
+      temperature: 20,
+      condition: 'Partly Cloudy',
+      description: 'Partly cloudy afternoon',
+      humidity: 62,
+      windSpeed: 10,
+      windDirection: 180,
+      weatherCode: 2
+    }
+  },
+  // International cities for testing
+  'london': {
+    name: 'London',
+    country: 'United Kingdom',
+    latitude: 51.5074,
+    longitude: -0.1278,
+    weather: {
+      temperature: 12,
+      condition: 'Rain',
+      description: 'Light rain showers',
+      humidity: 85,
+      windSpeed: 6,
+      windDirection: 135,
+      weatherCode: 61
+    }
+  },
+  'new york': {
+    name: 'New York',
+    country: 'United States',
+    latitude: 40.7128,
+    longitude: -74.0060,
+    weather: {
+      temperature: 8,
+      condition: 'Snow',
+      description: 'Light snow falling',
+      humidity: 72,
+      windSpeed: 18,
+      windDirection: 315,
+      weatherCode: 71
+    }
+  },
+  'tokyo': {
+    name: 'Tokyo',
+    country: 'Japan',
+    latitude: 35.6762,
+    longitude: 139.6503,
+    weather: {
+      temperature: 16,
+      condition: 'Partly Cloudy',
+      description: 'Partly cloudy and mild',
+      humidity: 68,
+      windSpeed: 14,
+      windDirection: 60,
+      weatherCode: 2
+    }
+  }
+};
+
+export class WeatherService {
+  async getWeatherByCoordinates(_latitude: number, _longitude: number): Promise<WeatherData> {
+    // Simulate API delay
+    await this.delay(500);
+    
+    // Default to Sydney, Australia for coordinate-based requests
+    // This simulates a user's location being detected as Australia
+    // Note: In a real implementation, we would use latitude/longitude to find the nearest location
+    const location = MOCK_LOCATIONS['sydney'];
+    
+    return this.createWeatherData(location);
   }
 
   async getWeatherByLocation(location: string): Promise<WeatherData> {
-    try {
-      // First, geocode the location
-      const geocodeUrl = `${this.GEOCODING_API}?name=${encodeURIComponent(location)}&count=1&language=en&format=json`;
-      
-      const geocodeResponse = await fetch(geocodeUrl);
-      if (!geocodeResponse.ok) {
-        throw new Error('Failed to find location');
-      }
-      
-      const geocodeData = await geocodeResponse.json();
-      
-      if (!geocodeData.results || geocodeData.results.length === 0) {
-        throw new Error(`Location "${location}" not found. Please try a different search term.`);
-      }
-      
-      const locationData = geocodeData.results[0];
-      const { latitude, longitude, name, country } = locationData;
-      
-      // Get weather data for the coordinates
-      const weatherUrl = `${this.WEATHER_API}?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m,winddirection_10m&timezone=auto`;
-      
-      const weatherResponse = await fetch(weatherUrl);
-      if (!weatherResponse.ok) {
-        throw new Error('Failed to fetch weather data');
-      }
-      
-      const weatherData = await weatherResponse.json();
-      
-      return this.parseWeatherData(weatherData, name, country);
-    } catch (error) {
-      console.error('Weather API error:', error);
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Failed to get weather data. Please try again.');
+    // Simulate API delay
+    await this.delay(800);
+    
+    const searchTerm = location.toLowerCase().trim();
+    
+    // Try to find exact match first
+    if (MOCK_LOCATIONS[searchTerm]) {
+      return this.createWeatherData(MOCK_LOCATIONS[searchTerm]);
     }
+    
+    // Try partial matches for Australian cities
+    for (const [key, data] of Object.entries(MOCK_LOCATIONS)) {
+      if (key.includes(searchTerm) || searchTerm.includes(key)) {
+        return this.createWeatherData(data);
+      }
+      
+      // Also check if the city name contains the search term
+      if (data.name.toLowerCase().includes(searchTerm) || searchTerm.includes(data.name.toLowerCase())) {
+        return this.createWeatherData(data);
+      }
+    }
+    
+    // If searching for "australia" or similar, default to Sydney
+    if (searchTerm.includes('australia') || searchTerm.includes('aus')) {
+      return this.createWeatherData(MOCK_LOCATIONS['sydney']);
+    }
+    
+    throw new Error(`Location "${location}" not found. Try searching for: Sydney, Melbourne, Brisbane, Perth, Adelaide, London, New York, or Tokyo.`);
   }
 
-  private parseWeatherData(data: any, locationName: string, countryName: string): WeatherData {
-    const current = data.current_weather;
-    const hourly = data.hourly;
+  private createWeatherData(locationData: MockLocation): WeatherData {
+    const now = new Date();
+    const weather = locationData.weather;
     
-    // Get current hour index for additional data
-    const currentTime = new Date(current.time);
-    const currentHour = currentTime.getHours();
-    const today = currentTime.toISOString().split('T')[0];
+    // Calculate feels like temperature
+    const feelsLike = this.calculateFeelsLike(weather.temperature, weather.humidity, weather.windSpeed);
     
-    // Find the closest hour in hourly data
-    let hourIndex = -1;
-    if (hourly && hourly.time) {
-      hourIndex = hourly.time.findIndex((time: string) => {
-        const timeDate = new Date(time);
-        return timeDate.toISOString().split('T')[0] === today && 
-               timeDate.getHours() === currentHour;
-      });
-    }
-    
-    // Get additional data from hourly if available
-    const humidity = hourIndex >= 0 && hourly.relativehumidity_2m 
-      ? hourly.relativehumidity_2m[hourIndex] 
-      : Math.round(Math.random() * 30 + 40); // Fallback: 40-70%
-    
-    const windSpeed = current.windspeed || 0;
-    const windDirection = current.winddirection || 0;
-    
-    // Generate weather condition description
-    const weatherCode = current.weathercode || 0;
-    const { condition, description } = this.getWeatherCondition(weatherCode);
-    
-    // Estimate "feels like" temperature (simple heat index approximation)
-    const feelsLike = this.calculateFeelsLike(current.temperature, humidity, windSpeed);
-
     return {
-      location: locationName,
-      country: countryName,
-      temperature: current.temperature,
-      condition,
-      description,
+      location: locationData.name,
+      country: locationData.country,
+      temperature: weather.temperature,
+      condition: weather.condition,
+      description: weather.description,
       feelsLike,
-      humidity,
-      windSpeed,
-      windDirection,
-      lastUpdated: current.time
+      humidity: weather.humidity,
+      windSpeed: weather.windSpeed,
+      windDirection: weather.windDirection,
+      lastUpdated: now.toISOString()
     };
   }
 
-  private getWeatherCondition(weatherCode: number): { condition: string; description: string } {
-    // WMO Weather interpretation codes
-    if (weatherCode === 0) {
-      return { condition: 'Clear', description: 'Clear sky' };
-    } else if (weatherCode <= 3) {
-      return { condition: 'Partly Cloudy', description: 'Partly cloudy' };
-    } else if (weatherCode <= 48) {
-      return { condition: 'Foggy', description: 'Fog' };
-    } else if (weatherCode <= 57) {
-      return { condition: 'Drizzle', description: 'Light drizzle' };
-    } else if (weatherCode <= 67) {
-      return { condition: 'Rain', description: 'Rain' };
-    } else if (weatherCode <= 77) {
-      return { condition: 'Snow', description: 'Snow' };
-    } else if (weatherCode <= 82) {
-      return { condition: 'Rain Showers', description: 'Rain showers' };
-    } else if (weatherCode <= 86) {
-      return { condition: 'Snow Showers', description: 'Snow showers' };
-    } else {
-      return { condition: 'Thunderstorm', description: 'Thunderstorm' };
-    }
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private calculateFeelsLike(temperature: number, humidity: number, windSpeed: number): number {
@@ -142,11 +216,11 @@ export class WeatherService {
     if (temperature >= 27) {
       // Heat index approximation for warm temperatures
       const heatIndex = temperature + (0.1 * humidity) - (0.1 * windSpeed);
-      return Math.max(heatIndex, temperature);
+      return Math.round(Math.max(heatIndex, temperature));
     } else if (temperature <= 10) {
       // Wind chill approximation for cold temperatures
       const windChill = temperature - (0.2 * windSpeed);
-      return Math.min(windChill, temperature);
+      return Math.round(Math.min(windChill, temperature));
     }
     
     return temperature;

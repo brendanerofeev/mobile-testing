@@ -1,10 +1,17 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 @customElement('location-input')
 export class LocationInput extends LitElement {
   @property({ type: String }) currentLocation = '';
-  @state() private inputValue = '';
+  
+  private _inputValue = '';
+  
+  get inputValue() { return this._inputValue; }
+  set inputValue(value: string) {
+    this._inputValue = value;
+    this.requestUpdate();
+  }
 
   static styles = css`
     :host {

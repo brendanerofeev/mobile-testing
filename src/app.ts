@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import './components/weather-display.ts';
 import './components/location-input.ts';
 import './components/loading-spinner.ts';
@@ -21,14 +21,45 @@ export interface WeatherData {
 
 @customElement('weather-app')
 export class WeatherApp extends LitElement {
-  @state() private weatherData: WeatherData | null = null;
-  @state() private loading = false;
-  @state() private error: string | null = null;
-  @state() private temperatureUnit: 'C' | 'F' = 'C';
-  @state() private currentLocation = '';
+  // Use simple properties to avoid conflicts
+  private _weatherData: WeatherData | null = null;
+  private _loading = false;
+  private _error: string | null = null;
+  private _temperatureUnit: 'C' | 'F' = 'C';
+  private _currentLocation = '';
 
   private weatherService = new WeatherService();
   private geolocationService = new GeolocationService();
+
+  get weatherData() { return this._weatherData; }
+  set weatherData(value: WeatherData | null) {
+    this._weatherData = value;
+    this.requestUpdate();
+  }
+
+  get loading() { return this._loading; }
+  set loading(value: boolean) {
+    this._loading = value;
+    this.requestUpdate();
+  }
+
+  get error() { return this._error; }
+  set error(value: string | null) {
+    this._error = value;
+    this.requestUpdate();
+  }
+
+  get temperatureUnit() { return this._temperatureUnit; }
+  set temperatureUnit(value: 'C' | 'F') {
+    this._temperatureUnit = value;
+    this.requestUpdate();
+  }
+
+  get currentLocation() { return this._currentLocation; }
+  set currentLocation(value: string) {
+    this._currentLocation = value;
+    this.requestUpdate();
+  }
 
   static styles = css`
     :host {
