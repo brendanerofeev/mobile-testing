@@ -37,7 +37,7 @@ jobs:
 
       # Type check with TypeScript
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       # Build the project
       - name: Build project

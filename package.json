@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "build:gh-pages": "tsc && vite build --base=/mobile-testing/",
     "preview": "vite preview",
-    "serve:static": "npx serve dist"
+    "serve:static": "npx serve dist",
+    "typecheck": "tsc --noEmit",
+    "ci": "npm run typecheck && npm run build",
+    "ci:gh-pages": "npm run typecheck && npm run build:gh-pages"
   },
   "devDependencies": {
     "typescript": "~5.8.3",
