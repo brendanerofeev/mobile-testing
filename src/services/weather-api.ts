@@ -16,25 +16,9 @@ export class WeatherService {
       
       const weatherData = await weatherResponse.json();
       
-      // Get location name using reverse geocoding
-      const locationUrl = `${this.GEOCODING_API}?latitude=${latitude}&longitude=${longitude}&count=1&format=json`;
-      
+      // Use coordinates as location name since Open-Meteo doesn't support reverse geocoding
       let locationName = `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
       let countryName = '';
-      
-      try {
-        const locationResponse = await fetch(locationUrl);
-        if (locationResponse.ok) {
-          const locationData = await locationResponse.json();
-          if (locationData.results && locationData.results.length > 0) {
-            const location = locationData.results[0];
-            locationName = location.name || location.admin1 || locationName;
-            countryName = location.country || '';
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to get location name:', e);
-      }
 
       return this.parseWeatherData(weatherData, locationName, countryName);
     } catch (error) {
