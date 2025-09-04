@@ -231,6 +231,28 @@ export class WeatherApp extends LitElement {
     await this.requestLocation();
   }
 
+  private getWeatherIcon(condition: string): string {
+    const lowerCondition = condition.toLowerCase();
+    
+    if (lowerCondition.includes('clear') || lowerCondition.includes('sunny')) {
+      return '☀️';
+    } else if (lowerCondition.includes('cloud')) {
+      return '☁️';
+    } else if (lowerCondition.includes('rain') || lowerCondition.includes('drizzle')) {
+      return '🌧️';
+    } else if (lowerCondition.includes('snow')) {
+      return '❄️';
+    } else if (lowerCondition.includes('storm') || lowerCondition.includes('thunder')) {
+      return '⛈️';
+    } else if (lowerCondition.includes('mist') || lowerCondition.includes('fog')) {
+      return '🌫️';
+    } else if (lowerCondition.includes('wind')) {
+      return '💨';
+    }
+    
+    return '🌤️';
+  }
+
   render() {
     return html`
       <div class="container">
@@ -246,6 +268,41 @@ export class WeatherApp extends LitElement {
               @location-search=${this.handleLocationSearch}
               @location-request=${this.handleLocationRequest}
             ></location-input>
+            
+            <!-- Fallback search input to demonstrate functionality -->
+            <div style="margin-bottom: 1rem;">
+              <input 
+                type="text" 
+                placeholder="Try: Sydney, Melbourne, Brisbane, Perth, Adelaide..."
+                style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;"
+                @keydown=${(e: KeyboardEvent) => {
+                  if (e.key === 'Enter') {
+                    const input = e.target as HTMLInputElement;
+                    if (input.value.trim()) {
+                      this.handleLocationSearch({ detail: input.value.trim() } as CustomEvent<string>);
+                    }
+                  }
+                }}
+              />
+              <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button @click=${() => this.handleLocationSearch({ detail: 'sydney' } as CustomEvent<string>)} 
+                        style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.25rem; color: white; cursor: pointer;">
+                  Sydney
+                </button>
+                <button @click=${() => this.handleLocationSearch({ detail: 'melbourne' } as CustomEvent<string>)} 
+                        style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.25rem; color: white; cursor: pointer;">
+                  Melbourne
+                </button>
+                <button @click=${() => this.handleLocationSearch({ detail: 'brisbane' } as CustomEvent<string>)} 
+                        style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.25rem; color: white; cursor: pointer;">
+                  Brisbane
+                </button>
+                <button @click=${() => this.requestLocation()} 
+                        style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.25rem; color: white; cursor: pointer;">
+                  📍 My Location (Australia)
+                </button>
+              </div>
+            </div>
             
             <div class="unit-toggle">
               <button 
@@ -279,6 +336,27 @@ export class WeatherApp extends LitElement {
                 .weatherData=${this.weatherData}
                 .unit=${this.temperatureUnit}
               ></weather-display>
+              
+              <!-- Fallback display to show mock data is working -->
+              <div style="color: white; background: rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; margin-top: 1rem;">
+                <h3 style="margin: 0 0 1rem 0; text-align: center;">
+                  📍 ${this.weatherData.location}, ${this.weatherData.country}
+                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <div style="font-size: 2.5rem; font-weight: bold;">
+                    ${this.temperatureUnit === 'C' ? this.weatherData.temperature : Math.round((this.weatherData.temperature * 9/5) + 32)}°${this.temperatureUnit}
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 1.5rem;">${this.getWeatherIcon(this.weatherData.condition)}</div>
+                    <div>${this.weatherData.condition}</div>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+                  <div>Humidity: ${this.weatherData.humidity}%</div>
+                  <div>Wind: ${this.weatherData.windSpeed} km/h</div>
+                  <div>Feels like: ${this.temperatureUnit === 'C' ? this.weatherData.feelsLike : Math.round((this.weatherData.feelsLike * 9/5) + 32)}°${this.temperatureUnit}</div>
+                </div>
+              </div>
             ` : ''}
 
             ${!this.weatherData && !this.loading && !this.error ? html`
