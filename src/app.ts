@@ -67,24 +67,56 @@ export class WeatherApp extends LitElement {
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       font-family: system-ui, -apple-system, sans-serif;
+      box-sizing: border-box;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 2rem 1rem;
+      padding: 1rem;
+      width: calc(100% - 2rem);
+    }
+
+    @media (min-width: 480px) {
+      .container {
+        padding: 2rem 1.5rem;
+        width: calc(100% - 3rem);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 2rem;
+        width: 100%;
+      }
     }
 
     .header {
       text-align: center;
       color: white;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
+      padding: 0 0.5rem;
     }
 
     .header h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin: 0 0 1rem 0;
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    @media (min-width: 480px) {
+      .header {
+        margin-bottom: 3rem;
+        padding: 0;
+      }
+      
+      .header h1 {
+        font-size: 3rem;
+      }
     }
 
     .header p {
@@ -103,16 +135,24 @@ export class WeatherApp extends LitElement {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       border-radius: 1rem;
-      padding: 2rem;
+      padding: 1.5rem;
       border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 1rem;
     }
 
     .weather-section {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       border-radius: 1rem;
-      padding: 2rem;
+      padding: 1.5rem;
       border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    @media (min-width: 480px) {
+      .search-section,
+      .weather-section {
+        padding: 2rem;
+      }
     }
 
     .error-message {
@@ -155,6 +195,30 @@ export class WeatherApp extends LitElement {
       .main-content {
         grid-template-columns: 1fr 2fr;
       }
+    }
+
+    /* Input field improvements for mobile */
+    input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.15);
     }
   `;
 
