@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -25,5 +26,11 @@ export default defineConfig({
     fs: {
       allow: ['..']
     }
+  },
+  test: {
+    environment: 'happy-dom',
+    globals: true,
+    include: ['src/**/*.{test,spec}.{js,ts,tsx}'],
+    exclude: ['node_modules', 'dist']
   }
 })

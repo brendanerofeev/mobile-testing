@@ -37,8 +37,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
+      # Run the complete CI pipeline before building for deployment
+      - name: Lint code
+        run: npm run lint
+        
       - name: Type check
         run: npm run typecheck
+        
+      - name: Run tests
+        run: npm run test:run
         
       - name: Build for GitHub Pages
         run: npm run build:gh-pages
