@@ -308,7 +308,8 @@ export class SettingsPage extends LitElement {
 
           <nav>
             <a href="/mobile-testing/" class="nav-link">🏠 Home</a>
-            <a href="/mobile-testing/about/" class="nav-link">ℹ️ About</a>
+            <a href="/mobile-testing/about.html" class="nav-link">ℹ️ About</a>
+            <a href="/mobile-testing/issues.html" class="nav-link">🐙 Issues</a>
           </nav>
         </main>
       </div>
