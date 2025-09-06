@@ -125,7 +125,7 @@ export class WeatherDisplay extends LitElement {
         month: 'short',
         day: 'numeric'
       });
-    } catch (e) {
+    } catch (_e) {
       return dateString;
     }
   }
