@@ -136,7 +136,8 @@ export class AboutPage extends LitElement {
 
           <nav>
             <a href="/mobile-testing/" class="nav-link">🏠 Home</a>
-            <a href="/mobile-testing/settings/" class="nav-link">⚙️ Settings</a>
+            <a href="/mobile-testing/settings.html" class="nav-link">⚙️ Settings</a>
+            <a href="/mobile-testing/issues.html" class="nav-link">🐙 Issues</a>
           </nav>
         </main>
       </div>

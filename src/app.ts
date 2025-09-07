@@ -5,6 +5,7 @@ import './components/location-input.ts';
 import './components/loading-spinner.ts';
 import { WeatherService } from './services/weather-api.ts';
 import { GeolocationService } from './services/geolocation.ts';
+import { GitHubService } from './services/github.ts';
 
 export interface WeatherData {
   location: string;
@@ -30,6 +31,7 @@ export class WeatherApp extends LitElement {
 
   private weatherService = new WeatherService();
   private geolocationService = new GeolocationService();
+  private githubService = GitHubService.getInstance();
 
   get weatherData() { return this._weatherData; }
   set weatherData(value: WeatherData | null) {
@@ -98,8 +100,8 @@ export class WeatherApp extends LitElement {
     .header {
       text-align: center;
       color: white;
-      margin-bottom: 2rem;
-      padding: 0 0.5rem;
+      margin-bottom: 3rem;
+      position: relative;
     }
 
     .header h1 {
@@ -123,6 +125,43 @@ export class WeatherApp extends LitElement {
       font-size: 1.2rem;
       opacity: 0.9;
       margin: 0;
+    }
+
+    .github-status {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.9rem;
+    }
+
+    .github-status.connected {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .github-status.disconnected {
+      background: rgba(156, 163, 175, 0.15);
+      border-color: rgba(156, 163, 175, 0.3);
+    }
+
+    .status-icon {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .github-status {
+        position: static;
+        display: inline-flex;
+        margin-bottom: 1rem;
+      }
     }
 
     .main-content {
@@ -318,9 +357,17 @@ export class WeatherApp extends LitElement {
   }
 
   render() {
+    const githubStatus = this.githubService.getConnectionStatus();
+    
     return html`
       <div class="container">
         <header class="header">
+          <div class="github-status ${githubStatus}">
+            <span class="status-icon">
+              ${githubStatus === 'connected' ? '🟢' : '⚫'}
+            </span>
+            <span>GitHub ${githubStatus === 'connected' ? 'Connected' : 'Offline'}</span>
+          </div>
           <h1>🌤️ Weather Now</h1>
           <p>Get current weather information for any location</p>
         </header>
@@ -439,6 +486,9 @@ export class WeatherApp extends LitElement {
             </a>
             <a href="/mobile-testing/settings.html" style="color: rgba(255,255,255,0.8); text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; transition: all 0.2s;">
               ⚙️ Settings
+            </a>
+            <a href="/mobile-testing/issues.html" style="color: rgba(255,255,255,0.8); text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; transition: all 0.2s;">
+              🐙 Issues
             </a>
           </nav>
         </footer>
