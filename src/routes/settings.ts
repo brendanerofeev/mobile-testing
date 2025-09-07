@@ -1,12 +1,36 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 @customElement('settings-page')
 export class SettingsPage extends LitElement {
-  @state() private temperatureUnit: 'C' | 'F' = 'C';
-  @state() private autoLocation = true;
-  @state() private notifications = false;
-  @state() private darkMode = false;
+  private _temperatureUnit: 'C' | 'F' = 'C';
+  private _autoLocation = true;
+  private _notifications = false;
+  private _darkMode = false;
+
+  get temperatureUnit() { return this._temperatureUnit; }
+  set temperatureUnit(value: 'C' | 'F') {
+    this._temperatureUnit = value;
+    this.requestUpdate();
+  }
+
+  get autoLocation() { return this._autoLocation; }
+  set autoLocation(value: boolean) {
+    this._autoLocation = value;
+    this.requestUpdate();
+  }
+
+  get notifications() { return this._notifications; }
+  set notifications(value: boolean) {
+    this._notifications = value;
+    this.requestUpdate();
+  }
+
+  get darkMode() { return this._darkMode; }
+  set darkMode(value: boolean) {
+    this._darkMode = value;
+    this.requestUpdate();
+  }
 
   static styles = css`
     :host {
