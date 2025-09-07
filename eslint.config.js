@@ -21,6 +21,7 @@ export default [
         sessionStorage: 'readonly',
         console: 'readonly',
         alert: 'readonly',
+        prompt: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         setInterval: 'readonly',

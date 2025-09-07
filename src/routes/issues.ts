@@ -370,7 +370,7 @@ export class IssuesPage extends LitElement {
       this.error = null;
 
       // Extract owner and repo from URL
-      const match = this.repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+      const match = this.repositoryUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
       if (!match) {
         throw new Error('Invalid GitHub repository URL');
       }
@@ -405,7 +405,7 @@ export class IssuesPage extends LitElement {
       this.error = null;
 
       // Extract owner and repo from URL
-      const match = this.repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+      const match = this.repositoryUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
       if (!match) {
         throw new Error('Invalid GitHub repository URL');
       }
