@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/mobile-testing/weather-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Settings - Configure Weather Now preferences" />
+    <meta name="description" content="GitHub Integration - Weather Now" />
     <meta name="theme-color" content="#2563eb" />
     
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Settings - Weather Now" />
-    <meta property="og:description" content="Configure your weather app preferences and settings" />
+    <meta property="og:title" content="GitHub Integration - Weather Now" />
+    <meta property="og:description" content="Connect to GitHub and manage issues directly from the Weather App" />
     <meta property="og:type" content="website" />
     
-    <title>Settings - Weather Now</title>
+    <title>GitHub Integration - Weather Now</title>
     
     <!-- Progressive Enhancement CSS -->
     <style>
@@ -40,6 +40,12 @@
         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
       
+      .loading-placeholder p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin: 0 0 2rem 0;
+      }
+      
       .spinner {
         width: 40px;
         height: 40px;
@@ -54,24 +60,26 @@
         100% { transform: rotate(360deg); }
       }
       
-      settings-page {
+      /* Hide loading placeholder once app loads */
+      github-page {
         display: block;
       }
       
-      settings-page:defined + .loading-placeholder {
+      github-page:defined + .loading-placeholder {
         display: none;
       }
     </style>
   </head>
   <body>
-    <settings-page></settings-page>
+    <github-page></github-page>
     
     <!-- Static loading placeholder shown until JavaScript loads -->
     <div class="loading-placeholder">
-      <h1>⚙️ Settings</h1>
+      <h1>🐙 GitHub Integration</h1>
+      <p>Loading GitHub integration...</p>
       <div class="spinner"></div>
     </div>
     
-    <script type="module" src="/src/routes/settings.ts"></script>
+    <script type="module" src="/src/routes/github.ts"></script>
   </body>
 </html>
