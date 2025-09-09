@@ -27,20 +27,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Build the React application
+      - name: Build React app
+        run: npm run build
         
-      # Validate the static HTML before deployment
-      - name: Validate HTML
+      # Validate the React app build before deployment
+      - name: Validate React app build
         run: |
-          if [ -f "index.html" ]; then
-            echo "✅ index.html exists"
-            if grep -q "Hello, World!" index.html; then
-              echo "✅ index.html contains 'Hello, World!'"
+          if [ -f "build/index.html" ]; then
+            echo "✅ React app built successfully"
+            if grep -q "root" build/index.html; then
+              echo "✅ React app contains root div"
             else
-              echo "❌ index.html does not contain 'Hello, World!'"
+              echo "❌ React app does not contain root div"
               exit 1
             fi
           else
-            echo "❌ index.html does not exist"
+            echo "❌ React app build failed - index.html not found"
             exit 1
           fi
         
@@ -50,7 +65,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: './build'
 
   # Deployment job
   deploy:
