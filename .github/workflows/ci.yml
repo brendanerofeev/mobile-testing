@@ -13,8 +13,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow validates the static HTML
+  validate:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -24,33 +24,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Node.js environment
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
-      # Lint the code
-      - name: Lint code
-        run: npm run lint
-
-      # Type check with TypeScript
-      - name: Type check
-        run: npm run typecheck
-
-      # Run tests
-      - name: Run tests
-        run: npm run test:run
-
-      # Build the project
-      - name: Build project
-        run: npm run build
-
-      # Build for GitHub Pages to ensure it works
-      - name: Build for GitHub Pages
-        run: npm run build:gh-pages
+      # Validate HTML structure
+      - name: Validate HTML
+        run: |
+          if [ -f "index.html" ]; then
+            echo "✅ index.html exists"
+            if grep -q "Hello, World!" index.html; then
+              echo "✅ index.html contains 'Hello, World!'"
+            else
+              echo "❌ index.html does not contain 'Hello, World!'"
+              exit 1
+            fi
+          else
+            echo "❌ index.html does not exist"
+            exit 1
+          fi

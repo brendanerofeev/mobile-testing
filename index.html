@@ -1,91 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/weather-icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-    <meta name="description" content="Weather Now - Get current weather information for any location" />
-    <meta name="theme-color" content="#2563eb" />
-    
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="Weather Now" />
-    <meta property="og:description" content="Get current weather information for any location" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/weather-og-image.png" />
-    
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Weather Now" />
-    <meta name="twitter:description" content="Get current weather information for any location" />
-    
-    <title>Weather Now - Current Weather Information</title>
-    
-    <!-- Progressive Enhancement CSS -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, World!</title>
     <style>
-      body {
-        margin: 0;
-        font-family: system-ui, -apple-system, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        color: #1a202c;
-      }
-      
-      .loading-placeholder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        text-align: center;
-        color: white;
-      }
-      
-      .loading-placeholder h1 {
-        font-size: 3rem;
-        margin: 0 0 1rem 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-      
-      .loading-placeholder p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        margin: 0 0 2rem 0;
-      }
-      
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(255,255,255,0.3);
-        border-top: 3px solid white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      /* Hide loading placeholder once app loads */
-      weather-app {
-        display: block;
-      }
-      
-      weather-app:defined + .loading-placeholder {
-        display: none;
-      }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
     </style>
-  </head>
-  <body>
-    <weather-app></weather-app>
-    
-    <!-- Static loading placeholder shown until JavaScript loads -->
-    <div class="loading-placeholder">
-      <h1>🌤️ Weather Now</h1>
-      <p>Loading current weather information...</p>
-      <div class="spinner"></div>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, World!</h1>
     </div>
-    
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+</body>
 </html>
