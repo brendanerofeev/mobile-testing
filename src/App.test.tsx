@@ -1,100 +1,153 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString();
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
-
-describe('LocalStorage Testing App', () => {
-  beforeEach(() => {
-    localStorageMock.clear();
-  });
-
-  test('renders LocalStorage testing interface', () => {
+describe('Construction Site Manager App', () => {
+  test('renders home page with construction site management interface', () => {
     render(<App />);
     
-    expect(screen.getByText('LocalStorage Testing Tool')).toBeInTheDocument();
-    expect(screen.getByText('Test your browser\'s localStorage functionality with these interactive tests')).toBeInTheDocument();
-    expect(screen.getByText('Run All Tests')).toBeInTheDocument();
-    expect(screen.getByText('About LocalStorage')).toBeInTheDocument();
+    expect(screen.getByText('Construction Site Manager')).toBeInTheDocument();
+    expect(screen.getByText('Commercial Plumbing Site Management Tools')).toBeInTheDocument();
+    expect(screen.getByText('Select a tool to get started with site management')).toBeInTheDocument();
+    
+    // Check that main tools are present
+    expect(screen.getByText('Equipment Tracker')).toBeInTheDocument();
+    expect(screen.getByText('Safety Checklist')).toBeInTheDocument();
   });
 
-  test('run all tests button works', async () => {
+  test('displays all tool cards with proper icons and descriptions', () => {
     render(<App />);
     
-    const runButton = screen.getByText('Run All Tests');
-    fireEvent.click(runButton);
+    // Equipment Tracker
+    expect(screen.getByText('Equipment Tracker')).toBeInTheDocument();
+    expect(screen.getByText('Track and manage construction equipment')).toBeInTheDocument();
     
-    // Button should show running state
-    expect(screen.getByText('Running Tests...')).toBeInTheDocument();
+    // Safety Checklist
+    expect(screen.getByText('Safety Checklist')).toBeInTheDocument();
+    expect(screen.getByText('Daily safety inspections and compliance')).toBeInTheDocument();
     
-    // Wait for tests to complete
-    await waitFor(() => {
-      expect(screen.getByText('Test Results')).toBeInTheDocument();
-    }, { timeout: 5000 });
-    
-    // Check that test results are displayed
-    expect(screen.getByText('Basic Storage Test')).toBeInTheDocument();
-    expect(screen.getByText('Storage Persistence Test')).toBeInTheDocument();
-    expect(screen.getByText('Large Data Test')).toBeInTheDocument();
-    expect(screen.getByText('Edge Cases Test')).toBeInTheDocument();
-    expect(screen.getByText('Clear Functionality Test')).toBeInTheDocument();
+    // Future tools
+    expect(screen.getByText('Crew Management')).toBeInTheDocument();
+    expect(screen.getByText('Material Inventory')).toBeInTheDocument();
+    expect(screen.getByText('Progress Reports')).toBeInTheDocument();
+    expect(screen.getByText('Quality Control')).toBeInTheDocument();
   });
 
-  test('clear results button works', async () => {
+  test('equipment tracker navigation works', () => {
     render(<App />);
     
-    // Run tests first
-    const runButton = screen.getByText('Run All Tests');
-    fireEvent.click(runButton);
+    // Click on Equipment Tracker tool
+    const equipmentCard = screen.getByText('Equipment Tracker').closest('.tool-card');
+    expect(equipmentCard).toBeInTheDocument();
+    fireEvent.click(equipmentCard!);
     
-    // Wait for tests to complete - all tests should be finished (no more "pending")
-    await waitFor(() => {
-      expect(screen.getByText('Test Results')).toBeInTheDocument();
-      // Check that button is no longer showing "Running Tests..."
-      expect(screen.getByText('Run All Tests')).toBeInTheDocument();
-    }, { timeout: 5000 });
+    // Should navigate to Equipment Tracker page
+    expect(screen.getByText('🔧 Equipment Tracker')).toBeInTheDocument();
+    expect(screen.getByText('Track and manage construction equipment')).toBeInTheDocument();
+    expect(screen.getByText('Equipment Status')).toBeInTheDocument();
     
-    // Now clear results
-    const clearButton = screen.getByText('Clear Results');
-    expect(clearButton).not.toBeDisabled();
-    fireEvent.click(clearButton);
+    // Should show equipment items
+    expect(screen.getByText('Pipe Threading Machine')).toBeInTheDocument();
+    expect(screen.getByText('Drain Snake - 50ft')).toBeInTheDocument();
     
-    // Test results should be gone immediately since it's just state change
-    expect(screen.queryByText('Test Results')).not.toBeInTheDocument();
+    // Should have back button
+    expect(screen.getByText('← Back to Home')).toBeInTheDocument();
   });
 
-  test('localStorage basic functionality works', () => {
-    // Test that our localStorage mock works
-    localStorage.setItem('test', 'value');
-    expect(localStorage.getItem('test')).toBe('value');
+  test('safety checklist navigation works', () => {
+    render(<App />);
     
-    localStorage.removeItem('test');
-    expect(localStorage.getItem('test')).toBeNull();
+    // Click on Safety Checklist tool
+    const safetyCard = screen.getByText('Safety Checklist').closest('.tool-card');
+    expect(safetyCard).toBeInTheDocument();
+    fireEvent.click(safetyCard!);
     
-    localStorage.setItem('test1', 'value1');
-    localStorage.setItem('test2', 'value2');
-    localStorage.clear();
-    expect(localStorage.getItem('test1')).toBeNull();
-    expect(localStorage.getItem('test2')).toBeNull();
+    // Should navigate to Safety Checklist page
+    expect(screen.getByText('⚠️ Safety Checklist')).toBeInTheDocument();
+    expect(screen.getByText('Daily safety inspections and compliance')).toBeInTheDocument();
+    expect(screen.getByText('Completion Status')).toBeInTheDocument();
+    
+    // Should show safety categories
+    expect(screen.getByText('Personal Protective Equipment')).toBeInTheDocument();
+    expect(screen.getByText('Work Area Safety')).toBeInTheDocument();
+    
+    // Should have back button
+    expect(screen.getByText('← Back to Home')).toBeInTheDocument();
+  });
+
+  test('back button navigation works from equipment tracker', () => {
+    render(<App />);
+    
+    // Navigate to Equipment Tracker
+    const equipmentCard = screen.getByText('Equipment Tracker').closest('.tool-card');
+    fireEvent.click(equipmentCard!);
+    
+    // Verify we're on Equipment Tracker page
+    expect(screen.getByText('🔧 Equipment Tracker')).toBeInTheDocument();
+    
+    // Click back button
+    const backButton = screen.getByText('← Back to Home');
+    fireEvent.click(backButton);
+    
+    // Should be back on home page
+    expect(screen.getByText('Construction Site Manager')).toBeInTheDocument();
+    expect(screen.getByText('Commercial Plumbing Site Management Tools')).toBeInTheDocument();
+  });
+
+  test('back button navigation works from safety checklist', () => {
+    render(<App />);
+    
+    // Navigate to Safety Checklist
+    const safetyCard = screen.getByText('Safety Checklist').closest('.tool-card');
+    fireEvent.click(safetyCard!);
+    
+    // Verify we're on Safety Checklist page
+    expect(screen.getByText('⚠️ Safety Checklist')).toBeInTheDocument();
+    
+    // Click back button
+    const backButton = screen.getByText('← Back to Home');
+    fireEvent.click(backButton);
+    
+    // Should be back on home page
+    expect(screen.getByText('Construction Site Manager')).toBeInTheDocument();
+    expect(screen.getByText('Commercial Plumbing Site Management Tools')).toBeInTheDocument();
+  });
+
+  test('placeholder tools show coming soon message', () => {
+    render(<App />);
+    
+    // Click on a placeholder tool (Crew Management)
+    const crewCard = screen.getByText('Crew Management').closest('.tool-card');
+    fireEvent.click(crewCard!);
+    
+    // Should show coming soon page
+    expect(screen.getByText('🚧 Coming Soon')).toBeInTheDocument();
+    expect(screen.getByText('This tool is currently under development')).toBeInTheDocument();
+    expect(screen.getByText('This tool will be available in a future update.')).toBeInTheDocument();
+    
+    // Should have back button
+    expect(screen.getByText('← Back to Home')).toBeInTheDocument();
+  });
+
+  test('safety checklist items can be toggled', () => {
+    render(<App />);
+    
+    // Navigate to Safety Checklist
+    const safetyCard = screen.getByText('Safety Checklist').closest('.tool-card');
+    fireEvent.click(safetyCard!);
+    
+    // Find a safety item that's not completed (Steel-toed boots)
+    const steelBootsItem = screen.getByText('Steel-toed boots on all personnel').closest('.safety-item');
+    expect(steelBootsItem).toBeInTheDocument();
+    
+    // The item should not be completed initially
+    const checkbox = steelBootsItem!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    expect(checkbox.checked).toBe(false);
+    
+    // Click to toggle
+    fireEvent.click(steelBootsItem!);
+    
+    // Should now be checked
+    expect(checkbox.checked).toBe(true);
   });
 });
