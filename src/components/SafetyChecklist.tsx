@@ -1,92 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getSafetyItems, toggleSafetyItem, store, SafetyItem } from '../database/store';
 import './SafetyChecklist.css';
-
-interface SafetyItem {
-  id: string;
-  category: string;
-  item: string;
-  completed: boolean;
-  notes?: string;
-  priority: 'high' | 'medium' | 'low';
-}
 
 interface SafetyChecklistProps {
   onBack: () => void;
 }
 
 const SafetyChecklist: React.FC<SafetyChecklistProps> = ({ onBack }) => {
-  const [safetyItems, setSafetyItems] = useState<SafetyItem[]>([
-    {
-      id: 'safety001',
-      category: 'Personal Protective Equipment',
-      item: 'All workers wearing hard hats',
-      completed: true,
-      priority: 'high'
-    },
-    {
-      id: 'safety002',
-      category: 'Personal Protective Equipment',
-      item: 'Safety glasses/goggles in use',
-      completed: true,
-      priority: 'high'
-    },
-    {
-      id: 'safety003',
-      category: 'Personal Protective Equipment',
-      item: 'Steel-toed boots on all personnel',
-      completed: false,
-      priority: 'high'
-    },
-    {
-      id: 'safety004',
-      category: 'Work Area Safety',
-      item: 'Work area properly ventilated',
-      completed: true,
-      priority: 'medium'
-    },
-    {
-      id: 'safety005',
-      category: 'Work Area Safety',
-      item: 'Emergency exits clearly marked and accessible',
-      completed: true,
-      priority: 'high'
-    },
-    {
-      id: 'safety006',
-      category: 'Equipment Safety',
-      item: 'All power tools inspected before use',
-      completed: false,
-      priority: 'high'
-    },
-    {
-      id: 'safety007',
-      category: 'Equipment Safety',
-      item: 'First aid kit accessible and stocked',
-      completed: true,
-      priority: 'medium'
-    },
-    {
-      id: 'safety008',
-      category: 'Hazard Management',
-      item: 'Confined space entry permits checked',
-      completed: false,
-      priority: 'high'
-    },
-    {
-      id: 'safety009',
-      category: 'Hazard Management',
-      item: 'Chemical storage properly labeled',
-      completed: true,
-      priority: 'medium'
-    }
-  ]);
+  const [safetyItems, setSafetyItems] = useState<SafetyItem[]>([]);
+
+  useEffect(() => {
+    // Load safety items from database
+    const loadSafetyItems = () => {
+      const items = getSafetyItems();
+      setSafetyItems(items);
+    };
+
+    // Initial load
+    loadSafetyItems();
+
+    // Listen for changes to the safetyItems table
+    const listener = () => {
+      loadSafetyItems();
+    };
+
+    store.addTableListener('safetyItems', listener);
+
+    // Cleanup listener on unmount
+    return () => {
+      store.delListener(listener);
+    };
+  }, []);
 
   const toggleItem = (id: string) => {
-    setSafetyItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
-    );
+    toggleSafetyItem(id);
   };
 
   const groupedItems = safetyItems.reduce((acc, item) => {

@@ -1,59 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getEquipment, store, Equipment } from '../database/store';
 import './EquipmentTracker.css';
-
-interface Equipment {
-  id: string;
-  name: string;
-  status: 'available' | 'in-use' | 'maintenance' | 'offline';
-  location: string;
-  lastChecked: string;
-  operator?: string;
-}
 
 interface EquipmentTrackerProps {
   onBack: () => void;
 }
 
 const EquipmentTracker: React.FC<EquipmentTrackerProps> = ({ onBack }) => {
-  const [equipment] = useState<Equipment[]>([
-    {
-      id: 'eq001',
-      name: 'Pipe Threading Machine',
-      status: 'available',
-      location: 'Storage Yard A',
-      lastChecked: '2024-01-20 08:30'
-    },
-    {
-      id: 'eq002',
-      name: 'Drain Snake - 50ft',
-      status: 'in-use',
-      location: 'Floor 3 - Unit 312',
-      lastChecked: '2024-01-20 07:15',
-      operator: 'Mike Johnson'
-    },
-    {
-      id: 'eq003',
-      name: 'Pipe Cutter - Large',
-      status: 'maintenance',
-      location: 'Maintenance Shop',
-      lastChecked: '2024-01-19 16:45'
-    },
-    {
-      id: 'eq004',
-      name: 'Pressure Test Kit',
-      status: 'available',
-      location: 'Tool Trailer',
-      lastChecked: '2024-01-20 06:00'
-    },
-    {
-      id: 'eq005',
-      name: 'Welding Equipment',
-      status: 'in-use',
-      location: 'Basement - Main Line',
-      lastChecked: '2024-01-20 09:00',
-      operator: 'David Smith'
-    }
-  ]);
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
+
+  useEffect(() => {
+    // Load equipment from database
+    const loadEquipment = () => {
+      const equipmentData = getEquipment();
+      setEquipment(equipmentData);
+    };
+
+    // Initial load
+    loadEquipment();
+
+    // Listen for changes to the equipment table
+    const listener = () => {
+      loadEquipment();
+    };
+
+    store.addTableListener('equipment', listener);
+
+    // Cleanup listener on unmount
+    return () => {
+      store.delListener(listener);
+    };
+  }, []);
 
   const getStatusColor = (status: Equipment['status']) => {
     switch (status) {
