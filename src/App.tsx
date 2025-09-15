@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HomePage from './components/HomePage';
 import EquipmentTracker from './components/EquipmentTracker';
 import SafetyChecklist from './components/SafetyChecklist';
+import { initializeDatabase } from './database/store';
 import './App.css';
 
 type CurrentView = 'home' | 'equipment-tracker' | 'safety-checklist' | 'crew-management' | 'material-inventory' | 'progress-reports' | 'quality-control';
 
 function App() {
   const [currentView, setCurrentView] = useState<CurrentView>('home');
+
+  // Initialize database on app startup
+  useEffect(() => {
+    initializeDatabase();
+  }, []);
 
   const navigateToTool = (toolId: string) => {
     setCurrentView(toolId as CurrentView);
