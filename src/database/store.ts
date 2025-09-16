@@ -20,6 +20,29 @@ export interface SafetyItem {
   priority: 'high' | 'medium' | 'low';
 }
 
+export interface EquipmentLineItem {
+  id: string;
+  description: string;
+  units: number;
+  hours: number;
+}
+
+export interface ServiceJob {
+  id: string;
+  clientId: string;
+  clientName: string;
+  m2: number;
+  chemicals: string;
+  summary: string;
+  access: string;
+  lighting: string;
+  equipment: EquipmentLineItem[];
+  labour: number;
+  voiceInput?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Create the main store
 export const store = createStore();
 
@@ -226,4 +249,81 @@ export const toggleSafetyItem = (id: string) => {
     store.setCell('safetyItems', id, 'completed', !currentRow.completed);
     saveToLocalStorage();
   }
+};
+
+// Mock clients for service job booking
+export interface Client {
+  id: string;
+  name: string;
+  address: string;
+  contact: string;
+}
+
+export const mockClients: Client[] = [
+  {
+    id: 'client001',
+    name: 'ABC Commercial Properties',
+    address: '123 Business District, Downtown',
+    contact: 'John Smith - (555) 123-4567'
+  },
+  {
+    id: 'client002', 
+    name: 'Metro Office Complex',
+    address: '456 Corporate Blvd, Midtown',
+    contact: 'Sarah Johnson - (555) 234-5678'
+  },
+  {
+    id: 'client003',
+    name: 'Retail Plaza Management',
+    address: '789 Shopping Center Dr, Westside',
+    contact: 'Mike Williams - (555) 345-6789'
+  },
+  {
+    id: 'client004',
+    name: 'Industrial Park Services',
+    address: '321 Manufacturing Way, Industrial Zone',
+    contact: 'Lisa Brown - (555) 456-7890'
+  },
+  {
+    id: 'client005',
+    name: 'Healthcare Facility Group',
+    address: '654 Medical Center Rd, Healthcare District',
+    contact: 'David Wilson - (555) 567-8901'
+  }
+];
+
+// Service job utility functions
+export const getServiceJobs = (): ServiceJob[] => {
+  const serviceJobTable = store.getTable('serviceJobs') || {};
+  return Object.keys(serviceJobTable).map(id => {
+    const row = (serviceJobTable as any)[id];
+    return {
+      id: row.id,
+      clientId: row.clientId,
+      clientName: row.clientName,
+      m2: row.m2,
+      chemicals: row.chemicals,
+      summary: row.summary,
+      access: row.access,
+      lighting: row.lighting,
+      equipment: JSON.parse(row.equipment || '[]'),
+      labour: row.labour,
+      voiceInput: row.voiceInput || undefined,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt
+    };
+  });
+};
+
+export const saveServiceJob = (serviceJob: ServiceJob) => {
+  const dataToStore = {
+    ...serviceJob,
+    equipment: JSON.stringify(serviceJob.equipment)
+  };
+  store.setRow('serviceJobs', serviceJob.id, dataToStore);
+  saveToLocalStorage();
+};
+
+export const generateServiceJobId = (): string => {
+  return 'job_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 };
