@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { mockClients, ServiceJob, EquipmentLineItem, saveServiceJob, generateServiceJobId } from '../database/store';
+import { mockExtractFieldsFromText, LLMFieldExtraction } from '../utils/llmService';
 import './ServiceJobBooking.css';
 
 interface ServiceJobBookingProps {
@@ -16,6 +17,8 @@ const ServiceJobBooking: React.FC<ServiceJobBookingProps> = ({ onBack }) => {
   const [equipment, setEquipment] = useState<EquipmentLineItem[]>([]);
   const [labour, setLabour] = useState<string>('');
   const [voiceInput, setVoiceInput] = useState<string>('');
+  const [isProcessingLLM, setIsProcessingLLM] = useState<boolean>(false);
+  const [llmError, setLlmError] = useState<string>('');
 
   const addEquipmentItem = () => {
     const newItem: EquipmentLineItem = {
@@ -80,11 +83,62 @@ const ServiceJobBooking: React.FC<ServiceJobBookingProps> = ({ onBack }) => {
     setEquipment([]);
     setLabour('');
     setVoiceInput('');
+    setLlmError('');
   };
 
-  const handleLLMFillFields = () => {
-    // Placeholder function for future AI integration
-    alert('LLM field population feature coming soon! This will analyze your voice input and auto-fill relevant fields.');
+  const handleLLMFillFields = async () => {
+    if (!voiceInput.trim()) {
+      setLlmError('Please enter some text to process');
+      return;
+    }
+
+    setIsProcessingLLM(true);
+    setLlmError('');
+
+    try {
+      // Use mock function for now since API key is not configured
+      const result = await mockExtractFieldsFromText(voiceInput);
+
+      if (result.success && result.data) {
+        populateFieldsFromLLM(result.data);
+      } else {
+        setLlmError(result.error || 'Failed to extract fields from text');
+      }
+    } catch (error) {
+      console.error('LLM processing error:', error);
+      setLlmError('An error occurred while processing the text');
+    } finally {
+      setIsProcessingLLM(false);
+    }
+  };
+
+  const populateFieldsFromLLM = (data: LLMFieldExtraction) => {
+    // Populate form fields with extracted data
+    if (data.m2 !== undefined) {
+      setM2(data.m2.toString());
+    }
+    if (data.chemicals) {
+      setChemicals(data.chemicals);
+    }
+    if (data.summary) {
+      setSummary(data.summary);
+    }
+    if (data.access) {
+      setAccess(data.access);
+    }
+    if (data.lighting) {
+      setLighting(data.lighting);
+    }
+    if (data.labour !== undefined) {
+      setLabour(data.labour.toString());
+    }
+    if (data.equipment && data.equipment.length > 0) {
+      // Add extracted equipment to existing equipment
+      setEquipment(prevEquipment => [...prevEquipment, ...data.equipment!]);
+    }
+
+    // Show success feedback
+    alert('Fields have been auto-populated from your text input!');
   };
 
   return (
@@ -265,13 +319,18 @@ const ServiceJobBooking: React.FC<ServiceJobBookingProps> = ({ onBack }) => {
               rows={3}
               className="form-textarea voice-input"
             />
+            {llmError && (
+              <div className="llm-error" style={{ color: 'red', fontSize: '0.9em', marginTop: '5px' }}>
+                {llmError}
+              </div>
+            )}
             <button
               type="button"
               onClick={handleLLMFillFields}
               className="llm-button"
-              disabled={!voiceInput.trim()}
+              disabled={!voiceInput.trim() || isProcessingLLM}
             >
-              🤖 Fill Fields with AI (Coming Soon)
+              {isProcessingLLM ? '🔄 Processing...' : '🤖 Fill Fields with AI'}
             </button>
           </div>
 
