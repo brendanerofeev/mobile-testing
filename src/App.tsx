@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import HomePage from './components/HomePage';
 import EquipmentTracker from './components/EquipmentTracker';
 import SafetyChecklist from './components/SafetyChecklist';
+import ServiceJobBooking from './components/ServiceJobBooking';
 import { initializeDatabase } from './database/store';
 import './App.css';
 
-type CurrentView = 'home' | 'equipment-tracker' | 'safety-checklist' | 'crew-management' | 'material-inventory' | 'progress-reports' | 'quality-control';
+type CurrentView = 'home' | 'equipment-tracker' | 'safety-checklist' | 'service-job-booking' | 'crew-management' | 'material-inventory' | 'progress-reports' | 'quality-control';
 
 function App() {
   const [currentView, setCurrentView] = useState<CurrentView>('home');
@@ -29,6 +30,8 @@ function App() {
         return <EquipmentTracker onBack={navigateToHome} />;
       case 'safety-checklist':
         return <SafetyChecklist onBack={navigateToHome} />;
+      case 'service-job-booking':
+        return <ServiceJobBooking onBack={navigateToHome} />;
       case 'crew-management':
       case 'material-inventory':
       case 'progress-reports':

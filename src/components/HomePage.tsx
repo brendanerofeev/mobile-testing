@@ -29,6 +29,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigateToTool }) => {
       description: 'Daily safety inspections and compliance',
       onClick: () => onNavigateToTool('safety-checklist')
     },
+    {
+      id: 'service-job-booking',
+      name: 'Service Job Booking',
+      icon: '📋',
+      description: 'Book and manage service jobs',
+      onClick: () => onNavigateToTool('service-job-booking')
+    },
     // Additional tools can be added here for future expansion
     {
       id: 'crew-management',
