@@ -1,96 +1,103 @@
-# Mobile Testing Repository
+# Construction Site Manager React Application
 
-Mobile testing is a repository designed for mobile application testing frameworks and tools. Currently, this is a minimal repository with an Apache 2.0 license, ready for mobile testing project development.
+Construction Site Manager is a React TypeScript application for commercial plumbing site management tools, deployed to GitHub Pages. The app provides equipment tracking, safety checklists, service job booking, and other construction site management features.
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
 ## Working Effectively
 
 ### Environment Setup
-Available tools in the environment:
-- Node.js 20.19.4
-- npm 10.8.2  
-- yarn (latest)
-- Gradle 9.0.0
-- Java/OpenJDK 17.0.16
-- Fastlane (latest)
+Available tools and versions:
+- Node.js 20.19.4 (required)
+- npm 10.8.2
+- React 19.1.1 with TypeScript 4.9.5
+- Create React App 5.0.1
+- Jest testing framework with React Testing Library
+- TinyBase for local data storage
 
 ### Bootstrap and Initial Setup
-For a fresh clone or new mobile testing project:
+For a fresh clone, ALWAYS run these commands in sequence:
 
-1. **Initialize npm project** (if package.json doesn't exist):
-   - `npm init -y` -- takes <1 second
-   
-2. **Install basic testing dependencies**:
-   - `npm install --save-dev jest` -- takes 30 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
-   - `npm install --save-dev @testing-library/react-native` (for React Native projects)
-   - `npm install --save-dev detox` (for end-to-end testing) -- takes 15 seconds. Set timeout to 30+ seconds.
+1. **Install dependencies**:
+   - `npm install` -- takes 45 seconds. NEVER CANCEL. Set timeout to 90+ seconds.
+   - This installs all React dependencies including testing libraries and TinyBase
 
-### React Native Mobile Testing Setup
-To create and test React Native projects:
+2. **Run tests to verify setup**:
+   - `npm test -- --passWithNoTests --watchAll=false` -- takes 4 seconds. Set timeout to 30+ seconds.
+   - Should pass all 18 tests (3 test suites)
 
-1. **Install React Native CLI globally**:
-   - `npm install --global @react-native-community/cli` -- takes 15 seconds. Set timeout to 30+ seconds.
+3. **Build the application**:
+   - `npm run build` -- takes 9 seconds. Set timeout to 60+ seconds.
+   - Creates optimized production build in `build/` directory
 
-2. **Create new React Native project**:
-   - `npx @react-native-community/cli@latest init ProjectName` -- takes 45 seconds. NEVER CANCEL. Set timeout to 90+ seconds.
+### Development Commands
 
-3. **Run React Native tests**:
-   - `cd ProjectName && npm test` -- takes 3 seconds for basic tests
-   - Tests use Jest framework and run basic snapshot tests
+1. **Start development server**:
+   - `npm start` -- takes 10 seconds to start. NEVER CANCEL. Set timeout to 60+ seconds.
+   - Opens application at `http://localhost:3000/mobile-testing`
+   - Hot reloading enabled for development
 
-### Build and Test Commands
+2. **Run test suite**:
+   - `npm test -- --passWithNoTests --watchAll=false` -- takes 4 seconds. Set timeout to 30+ seconds.
+   - Runs Jest tests with React Testing Library
+   - Includes 18 tests across 3 test suites
 
-1. **Basic npm test execution**:
-   - `npm test` -- takes <1 second for minimal setup, 3 seconds for React Native projects
-   - Default test command runs Jest test suites
+3. **Production build**:
+   - `npm run build` -- takes 9 seconds. Set timeout to 60+ seconds.
+   - Creates minified, optimized build for deployment
+   - Output includes main.js (71.24 kB gzipped) and main.css (3.03 kB gzipped)
 
-2. **Install development dependencies**:
-   - Any `npm install --save-dev [package]` command takes 10-30 seconds depending on package size
-   - NEVER CANCEL npm install commands. Set timeout to 60+ seconds minimum.
+4. **Deploy to GitHub Pages**:
+   - `npm run deploy` -- takes 15 seconds. Set timeout to 60+ seconds.
+   - Automatically runs build first, then deploys to gh-pages branch
 
-3. **Linting and formatting** (when configured):
-   - `npm run lint` -- typical mobile projects take 5-15 seconds
-   - `npm run format` -- typical mobile projects take 2-10 seconds
+### Code Quality and Linting
 
-### Flutter Mobile Testing Setup
-**WARNING**: Flutter installation currently fails in this environment due to SDK download issues. Do not attempt Flutter setup until this is resolved.
+1. **TypeScript compilation check**:
+   - `npx tsc --noEmit` -- takes 3 seconds. Set timeout to 30+ seconds.
+   - Validates TypeScript types without emitting files
 
-### Native Android/iOS Testing
-For native mobile testing:
-
-1. **Gradle builds** (Android projects):
-   - `gradle build` -- can take 2-15 minutes depending on project size. NEVER CANCEL. Set timeout to 30+ minutes.
-   - `gradle test` -- takes 1-10 minutes. NEVER CANCEL. Set timeout to 20+ minutes.
-
-2. **Java compilation**:
-   - Available with OpenJDK 17.0.16
-   - Basic compilation takes seconds to minutes
+2. **ESLint checking**:
+   - `npx eslint src/ --ext .ts,.tsx` -- takes 2 seconds. Set timeout to 30+ seconds.
+   - **NOTE**: Currently has 22 linting errors in test files (Testing Library best practices)
+   - Main application code passes linting - errors are only in test files
 
 ## Validation
 
 ### Manual Testing Requirements
-Always manually validate any mobile testing changes by:
+ALWAYS manually validate any changes by running through these complete user scenarios:
 
-1. **For React Native projects**:
-   - Create a test project: `npx @react-native-community/cli@latest init ValidationProject`
-   - Run the test suite: `cd ValidationProject && npm test`
-   - Verify the test passes and takes expected time (2-5 seconds)
+1. **Home Page Navigation**:
+   - Start development server: `npm start`
+   - Navigate to `http://localhost:3000/mobile-testing`
+   - Verify all 7 tool cards are visible (Equipment Tracker, Safety Checklist, Service Job Booking, etc.)
+   - Verify "Construction Site Manager" title and subtitle are displayed
 
-2. **For Jest-based testing**:
-   - Install Jest: `npm install --save-dev jest`
-   - Create a simple test file in `__tests__/` directory
-   - Run `npm test` and verify tests execute properly
+2. **Equipment Tracker Functionality**:
+   - Click on Equipment Tracker tool card
+   - Verify equipment status summary shows: 2 Available, 2 In Use, 1 Maintenance
+   - Verify 5 equipment items are listed with details (location, last checked, operator)
+   - Test back button navigation to home page
 
-3. **For end-to-end testing with Detox**:
-   - Install Detox: `npm install --save-dev detox`
-   - Verify installation completes without errors
-   - Configure Detox according to project needs
+3. **Safety Checklist Interactive Features**:
+   - Click on Safety Checklist tool card
+   - Verify completion status shows initially 67% (6 of 9 items)
+   - Click on an unchecked safety item (e.g., "Steel-toed boots on all personnel")
+   - Verify item becomes checked and completion percentage updates to 78% (7 of 9 items)
+   - Verify data persistence by refreshing page and checking item remains checked
+   - Test back button navigation to home page
+
+4. **Service Job Booking Form**:
+   - Click on Service Job Booking tool card
+   - Verify all form fields are present: Client, M2 Area, Chemicals, Summary, Access, Lighting, Labour Hours, Voice Input
+   - Test "Add Equipment" button functionality
+   - Test back button navigation to home page
 
 ### Always Run Before Committing
-- `npm test` -- verify all tests pass
-- `npm run lint` (if configured) -- verify code style compliance
-- `npm run build` (if configured) -- verify builds complete successfully
+- `npm test -- --passWithNoTests --watchAll=false` -- verify all 18 tests pass
+- `npm run build` -- verify production build succeeds without errors
+- `npx tsc --noEmit` -- verify TypeScript compilation passes
+- Manual validation of at least one complete user scenario (Equipment Tracker or Safety Checklist)
 
 ## Common Tasks
 
@@ -102,75 +109,118 @@ Current repository root contains:
 .git/
 .github/
   copilot-instructions.md
+  workflows/
+    ci.yml (runs tests and build validation)
+    deploy.yml (deploys to GitHub Pages)
 LICENSE
-package.json (after npm init)
+README.md
+package.json
+package-lock.json
+tsconfig.json
+.gitignore
+public/
+  index.html
+  manifest.json
+  favicon.ico
+  logo192.png
+  logo512.png
+  robots.txt
+src/
+  App.tsx (main application component)
+  App.test.tsx (main application tests)
+  App.css
+  index.tsx (React app entry point)
+  index.css
+  components/
+    HomePage.tsx (main dashboard)
+    EquipmentTracker.tsx (equipment management)
+    SafetyChecklist.tsx (safety compliance)
+    ServiceJobBooking.tsx (service job forms)
+    [corresponding .css and .test.tsx files]
+  database/
+    store.ts (TinyBase data management)
+    store.test.ts (database tests)
+  setupTests.ts
+  reportWebVitals.ts
+  react-app-env.d.ts
+build/ (after npm run build)
 node_modules/ (after npm install)
 ```
 
-### Package.json Template
-After running `npm init -y`, the generated package.json:
+### Package.json Key Scripts
 ```json
 {
-  "name": "mobile-testing",
-  "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "start": "react-scripts start",
+    "build": "react-scripts build", 
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
 }
 ```
 
 ### Timing Expectations and Timeouts
 **CRITICAL**: Always use these timeout values to prevent premature cancellation:
 
-- `npm init`: <1 second (timeout: 30 seconds)
-- `npm install jest`: 30 seconds (timeout: 90 seconds) 
-- `npm install detox`: 15 seconds (timeout: 60 seconds)
-- React Native CLI install: 15 seconds (timeout: 60 seconds)
-- React Native project creation: 45 seconds (timeout: 120 seconds)
-- Basic npm test: <1-3 seconds (timeout: 30 seconds)
-- Gradle builds: 2-15 minutes (timeout: 30+ minutes) - NEVER CANCEL
-- Complex mobile builds: 10-45 minutes (timeout: 60+ minutes) - NEVER CANCEL
+- `npm install`: 45 seconds (timeout: 90+ seconds) - NEVER CANCEL
+- `npm start`: 10 seconds to start (timeout: 60+ seconds) - NEVER CANCEL  
+- `npm test`: 4 seconds (timeout: 30+ seconds)
+- `npm run build`: 9 seconds (timeout: 60+ seconds)
+- `npm run deploy`: 15 seconds (timeout: 60+ seconds)
+- `npx tsc --noEmit`: 3 seconds (timeout: 30+ seconds)
+- `npx eslint`: 2 seconds (timeout: 30+ seconds)
 
-### Framework-Specific Notes
+### Technology Stack Details
 
-**React Native**:
-- Always use `@react-native-community/cli` instead of deprecated `react-native` command
-- Default project includes Jest test setup
-- Metro bundler may take additional time on first run
+**React Application**:
+- React 19.1.1 with functional components and hooks
+- TypeScript 4.9.5 for type safety
+- Create React App 5.0.1 for build tooling
+- Configured for GitHub Pages deployment at `/mobile-testing` path
 
-**Jest Testing**:
-- Standard testing framework for JavaScript/TypeScript mobile projects
-- Supports snapshot testing, unit testing, and integration testing
-- Fast execution for basic test suites
+**Data Management**:
+- TinyBase 6.6.0 for local data storage with localStorage persistence
+- Equipment tracking with status management
+- Safety checklist with completion tracking
+- Service job booking with form data management
 
-**Detox E2E Testing**:
-- Requires additional device/emulator setup for full functionality
-- Installation is quick but configuration may require additional steps
-- Best for testing complete user workflows
+**Testing Framework**:
+- Jest with React Testing Library
+- 18 comprehensive tests covering UI interactions and data management
+- Tests include navigation, state management, and user workflows
+- Console logging visible during tests (database initialization messages)
 
-### Known Issues and Limitations
-- Flutter SDK download currently fails - do not attempt Flutter setup
-- Android emulator not available in this environment
-- iOS simulator not available in this environment
-- Physical device testing not possible in this environment
+**Styling and UI**:
+- Custom CSS with responsive design
+- Card-based interface for tool selection
+- Blue theme with white cards
+- Mobile-friendly responsive layout
 
-### Best Practices for Mobile Testing
-1. **Always validate installation steps** before documenting them
-2. **Use appropriate timeouts** for mobile build processes
-3. **Test across multiple frameworks** when applicable (React Native, Flutter, native)
-4. **Focus on automated testing** since manual device testing is limited
-5. **Use snapshot testing** for UI component validation
-6. **Implement unit tests** for business logic
-7. **Add integration tests** for critical user paths
+### Known Issues and Current State
+- ESLint shows 22 errors in test files related to Testing Library best practices (not blocking)
+- Main application code passes all TypeScript and functional tests
+- Application fully functional with interactive features working correctly
+- All user scenarios validated and working properly
+
+### Live Deployment
+- Application is deployed to GitHub Pages at: https://brendanerofeev.github.io/mobile-testing
+- Automatic deployment triggered by pushes to main branch
+- CI pipeline validates tests and build before deployment
+
+### Best Practices for Development
+1. **Always run full test suite** before making changes
+2. **Use development server** for iterative development with hot reloading
+3. **Test interactive features manually** after changes (safety checklist toggles, navigation)
+4. **Validate production build** before committing changes
+5. **Follow React/TypeScript patterns** established in existing code
+6. **Test data persistence** by refreshing browser during development
+7. **Use TypeScript compilation check** to catch type errors early
 
 ## Emergency Procedures
 If any command hangs or appears frozen:
-- DO NOT cancel commands that typically take minutes (builds, installs)
+- DO NOT cancel npm install (takes 45 seconds) or npm start (takes 10 seconds to start)
 - Wait at least the documented timeout period before investigating
-- Check system resources if unexpected delays occur
-- Prefer starting fresh over attempting to recover from partial states
+- For development server issues, check if port 3000 is available
+- For build issues, ensure build/ directory is clean and retry
